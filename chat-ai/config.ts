@@ -15,3 +15,10 @@ export const configIA =
   "\n   3.3. 'praise': array que deve conter as mensagens classificadas como 'elogio'" +
   "\n   3.4. Resumindo, o JSON deve ser do seguinte formato:" +
   '{"suggestion": ["Suggestion1 gerada pela IA"],"complaint": ["Complaint1 gerada pela AI", "Complaint2 gerada pela AI"],"praise": []}';
+
+  export const preconfig = 
+  "Será dividida as mensagens ao ser enviada para Inteligencia Artificial." +
+  " E as mensagens serão divididas em 2000 caracteres." +
+  " Para essas mensagens haverá um token de continuação no final da mensagem: '[continuação]'." +
+  " Para a ultima mensagem dessa sequencia haverá no final da mensagem um token de finalização: '[fim]'." +
+  " Desconsiderar esses tokens de continuação e finalização porque não fazem parte da mensagem  "
