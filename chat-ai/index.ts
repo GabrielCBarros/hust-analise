@@ -1,5 +1,5 @@
 import fs from "fs";
-import {chatAi} from "./chatAi"
+import { chatAi } from "./chatAi";
 import { MensagemFormatado, MensagemModel, MensagemModelFormatado } from "./mensagem.model";
 
 function fetchJSONData() {
@@ -8,25 +8,28 @@ function fetchJSONData() {
       console.log(error);
       return;
     }
-    let jsonMensagens: MensagemModel = JSON.parse(data)
-  // chatAi(jsonMensagens)
-  let mensagensFormatada: MensagemFormatado[] = []
-   for (let index = 0; index < jsonMensagens.mensagens.length; index++) {
+    let jsonMensagens: MensagemModel = JSON.parse(data);
+    let jsonMensagensFormatado = obterJsonMensagensFormatadas(jsonMensagens);
+    chatAi(jsonMensagensFormatado);
+  });
+}
+function obterJsonMensagensFormatadas(jsonMensagens: MensagemModel): MensagemModelFormatado {
+  let mensagensFormatada: MensagemFormatado[] = [];
+  for (let index = 0; index < jsonMensagens.mensagens.length; index++) {
     const element = jsonMensagens.mensagens[index];
     const mensagemFormatado: MensagemFormatado = {
-      mensagem:element.mensagem,
-      usuario:element.usuario,
-      tipo:element.tipo,
-    }
+      mensagem: element.mensagem,
+      usuario: element.usuario,
+      tipo: element.tipo,
+      data: element.data,
+    };
 
-    mensagensFormatada.push(mensagemFormatado)
-    
+    mensagensFormatada.push(mensagemFormatado);
   }
-  let mensagemModelFormatado: MensagemModelFormatado = {mensagens: mensagensFormatada}
-  console.log(JSON.stringify(mensagemModelFormatado).length)
+  let mensagemModelFormatado: MensagemModelFormatado = { mensagens: mensagensFormatada };
+  console.log(JSON.stringify(mensagemModelFormatado).length);
 
-
-  });
+  return mensagemModelFormatado;
 }
 
 fetchJSONData();

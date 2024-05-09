@@ -24,4 +24,5 @@ export type MensagemFormatado = {
     "mensagem": string,
     "tipo": string,
     "usuario": any,
+    "data": string,
 }
