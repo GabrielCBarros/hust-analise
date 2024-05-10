@@ -39,11 +39,12 @@ function dividirMensagem(mensagem: string): string[] {
     returnMensagem.push(mensagem);
   } else {
     const tamanhoMensagem = mensagem.length;
-    for (let index = 0; index < tamanhoMensagem; index += MAX_TOKENS) {
+    let index = 0;
+    while (index < tamanhoMensagem) {
       let msg = mensagem.substring(index, index + MAX_TOKENS);
-
+      index += MAX_TOKENS;
       //se for a ultima mensagem colocar o fim se nao a continuaçao
-      if ((index = tamanhoMensagem - 1)) {
+      if (index - tamanhoMensagem) {
         msg += TOKEN_FINAL;
       } else {
         msg += TOKEN_CONTINUACAO;
