@@ -26,4 +26,7 @@ export const PRECONFIG_IA =
   ` Para essas mensagens haverá um token de continuação no final da mensagem: '${TOKEN_CONTINUACAO}'.` +
   ` Para a ultima mensagem dessa sequencia haverá no final da mensagem um token de finalização: '${TOKEN_FINAL}'.` +
   ` Esses tokens ('${TOKEN_CONTINUACAO}' e '${TOKEN_FINAL}') não fazem parte da mensagem a ser analisada, mas são um indicativo de quando há continuação e de quando terminou o envio segmentado.` +
-  ` Desconsiderar esses tokens de continuação e finalização porque não fazem parte da mensagem  `;
+  ` Desconsiderar esses tokens de continuação e finalização porque não fazem parte da mensagem  ` +
+  ` As mensagens em sequência são incompletas, e precisam ser concatenadas para você compreender a mensagem por completo.` +
+  ` Então, enquanto estiver nas mensagens que contenham ${TOKEN_CONTINUACAO}, apenas me responder: 'Aguardando a sequência da mensagem'.` +
+  ` Somente quando eu enviar a última mensagem da sequência (mensagens que contenham o token ${TOKEN_FINAL}), será feita a análise das conversas`;
