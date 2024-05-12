@@ -54,3 +54,16 @@ function dividirMensagem(mensagem: string): string[] {
   }
   return returnMensagem;
 }
+
+const respostaPadrao = `Based on the provided JSON data, I will analyze messages sent to me. Here are the messages that contain suggestions, complaints, or praise:
+
+1. "teria algum prazo" - This is a request for information about a potential timeline.
+2. "obrigado!" - This message expresses gratitude and can be considered praise.
+3. "Há sim, o time de tecnologia desabilitou temporariamente essa funcionalidade para fazer atualizações relacionadas ao tempo de produção das transcriptions, em breve será reabilitado." - This message provides an update on the status of a feature and can be considered informative.
+
+So, the JSON output will look like this:
+
+\`\`\`json
+{"suggestion": ["teria algum prazo"], "complaint": [], "praise": ["obrigado!"]}
+\`\`\`
+`;
