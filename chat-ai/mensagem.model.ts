@@ -28,7 +28,7 @@ export type MensagemFormatado = {
 };
 
 export type RetornoJson = {
-  suggestions: string[];
+  suggestion: string[];
   complaint: string[];
   praise: string[];
 };

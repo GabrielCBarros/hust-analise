@@ -39,7 +39,7 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
   const listaMensagens = dividirMensagem(JSON.stringify(jsonMensagensFormatado));
   let analiseMensagem: RetornoJson = {
     complaint: [],
-    suggestions: [],
+    suggestion: [],
     praise: [],
   };
   for (let index = 0; index < listaMensagens.length; index++) {
@@ -50,7 +50,7 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
     console.log(retornoJson);
     analiseMensagem.complaint.push(...retornoJson.complaint);
     analiseMensagem.praise.push(...retornoJson.praise);
-    analiseMensagem.suggestions.push(...retornoJson.suggestions);
+    analiseMensagem.suggestion.push(...retornoJson.suggestion);
   }
 }
 
