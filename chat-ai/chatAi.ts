@@ -6,7 +6,6 @@ import { MensagemModelFormatado, RetornoJson } from "./mensagem.model";
 
 export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Promise<void> {
   // model name
-
   const MODEL_NAME = "mistral-7b-instruct-v0.2.Q5_K_M.gguf";
   // const MODEL_NAME = "llama-2-7b.Q5_K_M.gguf";
 
@@ -27,12 +26,13 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
 
   // PRECONFIG_IA
   respostaAi = await session.prompt(PRECONFIG_IA);
+  console.log("resposta PRECONFIG", respostaAi);
 
   //CONFIG_IA
   const listaConfig = dividirMensagem(CONFIG_IA);
   for (let i = 0; i < listaConfig.length; i++) {
     respostaAi = await session.prompt(listaConfig[i]);
-    console.log("Ai: " + respostaAi);
+    console.log("resposta config", respostaAi);
   }
 
   //JSONMENSAGENS
@@ -44,14 +44,14 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
   };
   for (let index = 0; index < listaMensagens.length; index++) {
     respostaAi = await session.prompt(listaMensagens[index]);
+    console.log("resposta mensagens", respostaAi);
     var mySubString = respostaAi.substring(respostaAi.indexOf("```json") + 7, respostaAi.lastIndexOf("```"));
-    console.log(mySubString);
     const retornoJson: RetornoJson = JSON.parse(mySubString);
-    console.log(retornoJson);
     analiseMensagem.complaint.push(...retornoJson.complaint);
     analiseMensagem.praise.push(...retornoJson.praise);
     analiseMensagem.suggestion.push(...retornoJson.suggestion);
   }
+  console.log("Analise de mensagens", analiseMensagem);
 }
 
 function dividirMensagem(mensagem: string): string[] {

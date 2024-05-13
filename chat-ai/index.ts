@@ -1,6 +1,6 @@
 import fs from "fs";
 import { chatAi } from "./chatAi";
-import { MensagemFormatado, MensagemModel, MensagemModelFormatado, RetornoJson } from "./mensagem.model";
+import { MensagemFormatado, MensagemModel, MensagemModelFormatado } from "./mensagem.model";
 
 function fetchJSONData() {
   fs.readFile("./Mensagens/messagens.lucas.json", "utf8", (error, data) => {
