@@ -2,7 +2,7 @@ import { LlamaChatSession, LlamaContext, LlamaModel } from "node-llama-cpp";
 import path from "path";
 import { fileURLToPath } from "url";
 import { CONFIG_IA, MAX_TOKENS, PRECONFIG_IA, TOKEN_CONTINUACAO, TOKEN_FINAL } from "./config";
-import { MensagemModelFormatado } from "./mensagem.model";
+import { MensagemModelFormatado, RetornoJson } from "./mensagem.model";
 
 export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Promise<void> {
   // model name
@@ -22,14 +22,35 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
 
   const context = new LlamaContext({ model });
   const session = new LlamaChatSession({ context });
+
   let respostaAi = "";
+
+  // PRECONFIG_IA
   respostaAi = await session.prompt(PRECONFIG_IA);
-  const config = CONFIG_IA;
-  respostaAi = await session.prompt(config);
-  console.log("Ai: " + respostaAi);
+
+  //CONFIG_IA
+  const listaConfig = dividirMensagem(CONFIG_IA);
+  for (let i = 0; i < listaConfig.length; i++) {
+    respostaAi = await session.prompt(listaConfig[i]);
+    console.log("Ai: " + respostaAi);
+  }
+
+  //JSONMENSAGENS
   const listaMensagens = dividirMensagem(JSON.stringify(jsonMensagensFormatado));
+  let analiseMensagem: RetornoJson = {
+    complaint: [],
+    suggestions: [],
+    praise: [],
+  };
   for (let index = 0; index < listaMensagens.length; index++) {
     respostaAi = await session.prompt(listaMensagens[index]);
+    var mySubString = respostaAi.substring(respostaAi.indexOf("```json") + 7, respostaAi.lastIndexOf("```"));
+    console.log(mySubString);
+    const retornoJson: RetornoJson = JSON.parse(mySubString);
+    console.log(retornoJson);
+    analiseMensagem.complaint.push(...retornoJson.complaint);
+    analiseMensagem.praise.push(...retornoJson.praise);
+    analiseMensagem.suggestions.push(...retornoJson.suggestions);
   }
 }
 
@@ -54,16 +75,3 @@ function dividirMensagem(mensagem: string): string[] {
   }
   return returnMensagem;
 }
-
-const respostaPadrao = `Based on the provided JSON data, I will analyze messages sent to me. Here are the messages that contain suggestions, complaints, or praise:
-
-1. "teria algum prazo" - This is a request for information about a potential timeline.
-2. "obrigado!" - This message expresses gratitude and can be considered praise.
-3. "Há sim, o time de tecnologia desabilitou temporariamente essa funcionalidade para fazer atualizações relacionadas ao tempo de produção das transcriptions, em breve será reabilitado." - This message provides an update on the status of a feature and can be considered informative.
-
-So, the JSON output will look like this:
-
-\`\`\`json
-{"suggestion": ["teria algum prazo"], "complaint": [], "praise": ["obrigado!"]}
-\`\`\`
-`;
