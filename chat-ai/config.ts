@@ -7,9 +7,10 @@ export const CONFIG_IA =
   `\n   1.1. Contém um array de mensagens` +
   `\n   1.2. Cada mensagem do array de mensagens está organizada da seguinte forma:` +
   `\n       1.2.1. 'mensagem': texto da mensagem` +
-  `\n       1.2.2. 'tipo': pode ser 'chat' ou 'sistema'. Se for 'chat', significa que é uma mensagem enviada por mim ou por quem estou conversando; e se for 'sistema', é uma mensagem automática enviada por bot` +
+  `\n       1.2.2. 'tipo': pode ser 'chat' ou 'sistema' ou 'audio'. Se for 'chat', significa que é uma mensagem enviada por mim ou por quem estou conversando; e se for 'sistema', é uma mensagem automática enviada por bot; e se for 'audio' é uma mensagem que tem que ser lida usando 'caption'` +
   `\n       1.2.3. 'usuario': dados do usuário que enviou a mensagem. Se for 'null', significa que outra pessoa enviou a mensagem pra mim; se for diferente de 'null', significa que eu enviei a mensagem` +
   `\n       1.2.4. 'data': A data que a mensagem foi enviada` +
+  `\n       1.2.5. 'caption': Deve ser usada quando for tipo audio, da seguinte forma tera que` +
   `\n2. A análise de mensagem deve ser feita da seguinte forma:` +
   `\n   2.1. Analisar as mensagens de quem envia as mensagens para mim.` +
   `\n   2.2. Ao analisar as mensagens, quero que selecione as mensagens que tiverem algum: sugestão, reclamação ou elogio` +

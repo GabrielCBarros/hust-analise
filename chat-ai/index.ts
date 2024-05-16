@@ -22,6 +22,7 @@ function obterJsonMensagensFormatadas(jsonMensagens: MensagemModel): MensagemMod
       usuario: element.usuario,
       tipo: element.tipo,
       data: element.data,
+      caption: element.caption,
     };
 
     mensagensFormatada.push(mensagemFormatado);

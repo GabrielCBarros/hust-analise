@@ -2,7 +2,7 @@ import { LlamaChatSession, LlamaContext, LlamaModel } from "node-llama-cpp";
 import path from "path";
 import { fileURLToPath } from "url";
 import { CONFIG_IA, MAX_TOKENS, PRECONFIG_IA, TOKEN_CONTINUACAO, TOKEN_FINAL } from "./config";
-import { MensagemModelFormatado, RetornoJson } from "./mensagem.model";
+import { MensagemModelFormatado, AnaliseMensagensJson } from "./mensagem.model";
 
 export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Promise<void> {
   // model name
@@ -37,7 +37,7 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
 
   //JSONMENSAGENS
   const listaMensagens = dividirMensagem(JSON.stringify(jsonMensagensFormatado));
-  let analiseMensagem: RetornoJson = {
+  let analiseMensagem: AnaliseMensagensJson = {
     complaint: [],
     suggestion: [],
     praise: [],
@@ -46,7 +46,7 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
     respostaAi = await session.prompt(listaMensagens[index]);
     console.log("resposta mensagens", respostaAi);
     var mySubString = respostaAi.substring(respostaAi.indexOf("```json") + 7, respostaAi.lastIndexOf("```"));
-    const retornoJson: RetornoJson = JSON.parse(mySubString);
+    const retornoJson: AnaliseMensagensJson = JSON.parse(mySubString);
     analiseMensagem.complaint.push(...retornoJson.complaint);
     analiseMensagem.praise.push(...retornoJson.praise);
     analiseMensagem.suggestion.push(...retornoJson.suggestion);

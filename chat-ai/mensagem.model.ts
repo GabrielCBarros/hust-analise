@@ -1,6 +1,6 @@
-export type MensagemModel = { mensagens: Mensagem[] };
+export type MensagemModel = { mensagens: MensagemOriginal[] };
 export type MensagemModelFormatado = { mensagens: MensagemFormatado[] };
-export type Mensagem = {
+export type MensagemOriginal = {
   mensagem: string;
   data: string;
   caption: any;
@@ -25,9 +25,10 @@ export type MensagemFormatado = {
   tipo: string;
   usuario: any;
   data: string;
+  caption: string;
 };
 
-export type RetornoJson = {
+export type AnaliseMensagensJson = {
   suggestion: string[];
   complaint: string[];
   praise: string[];
