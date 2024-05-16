@@ -25,6 +25,7 @@ export type MensagemFormatado = {
   tipo: string;
   usuario: any;
   data: string;
+  caption: string;
 };
 
 export type RetornoJson = {
