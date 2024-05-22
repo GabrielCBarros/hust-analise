@@ -11,9 +11,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/pg": "^8.11.6",
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "node-llama-cpp": "^2.8.9"
+    "node-llama-cpp": "^2.8.9",
+    "pg": "^8.11.5"
   }
 }

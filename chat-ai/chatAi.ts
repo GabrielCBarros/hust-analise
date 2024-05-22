@@ -2,7 +2,7 @@ import { LlamaChatSession, LlamaContext, LlamaModel } from "node-llama-cpp";
 import path from "path";
 import { fileURLToPath } from "url";
 import { CONFIG_IA, MAX_TOKENS, PRECONFIG_IA, TOKEN_CONTINUACAO, TOKEN_FINAL } from "./config";
-import { MensagemModelFormatado, AnaliseMensagensJson } from "./mensagem.model";
+import { MensagemModelFormatado, AnaliseMensagensJson, MensagemFormatado } from "./mensagem.model";
 
 export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Promise<void> {
   // model name
@@ -52,6 +52,7 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
     analiseMensagem.suggestion.push(...retornoJson.suggestion);
   }
   console.log("Analise de mensagens", analiseMensagem);
+  extrairTelefone(jsonMensagensFormatado.mensagens[0].id_mensagem_whatsapp);
 }
 
 function dividirMensagem(mensagem: string): string[] {
@@ -74,4 +75,11 @@ function dividirMensagem(mensagem: string): string[] {
     }
   }
   return returnMensagem;
+}
+// criar funçao, passar o id_mensagem_watsap para dentro da funçao como parametro, extrair desse id mensagem o telefone, retornar esse telefone, tipar parametro e funçao
+function extrairTelefone(id_mensagem_whatsapp: string): string {
+  var mySubString: string = id_mensagem_whatsapp.substring(id_mensagem_whatsapp.indexOf("_") + 1, id_mensagem_whatsapp.lastIndexOf("@c.us"));
+  console.log(mySubString);
+
+  return mySubString;
 }

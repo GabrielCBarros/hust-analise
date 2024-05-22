@@ -26,6 +26,7 @@ export type MensagemFormatado = {
   usuario: any;
   data: string;
   caption: string;
+  id_mensagem_whatsapp: string;
 };
 
 export type AnaliseMensagensJson = {

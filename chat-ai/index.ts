@@ -23,6 +23,7 @@ function obterJsonMensagensFormatadas(jsonMensagens: MensagemModel): MensagemMod
       tipo: element.tipo,
       data: element.data,
       caption: element.caption,
+      id_mensagem_whatsapp: element.id_mensagem_whatsapp,
     };
 
     mensagensFormatada.push(mensagemFormatado);
