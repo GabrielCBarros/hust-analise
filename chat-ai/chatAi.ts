@@ -3,7 +3,10 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { CONFIG_IA, MAX_TOKENS, PRECONFIG_IA, TOKEN_CONTINUACAO, TOKEN_FINAL } from "./config";
 import { MensagemModelFormatado, AnaliseMensagensJson, MensagemFormatado } from "./mensagem.model";
-
+import { inserirComplaint } from "./bd";
+import { inserirPraise } from "./bd";
+import { inseirSugestao } from "./bd";
+import { obterSugestoes } from "./bd";
 export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Promise<void> {
   // model name
   const MODEL_NAME = "mistral-7b-instruct-v0.2.Q5_K_M.gguf";
@@ -52,7 +55,22 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
     analiseMensagem.suggestion.push(...retornoJson.suggestion);
   }
   console.log("Analise de mensagens", analiseMensagem);
-  extrairTelefone(jsonMensagensFormatado.mensagens[0].id_mensagem_whatsapp);
+
+  const id_conversa = extrairTelefone(jsonMensagensFormatado.mensagens[0].id_mensagem_whatsapp);
+
+  for (let index = 0; index < analiseMensagem.complaint.length; index++) {
+    await inserirComplaint(id_conversa, analiseMensagem.complaint[index]);
+  }
+
+  for (let index = 0; index < analiseMensagem.praise.length; index++) {
+    await inserirPraise(id_conversa, analiseMensagem.praise[index]);
+  }
+
+  for (let index = 0; index < analiseMensagem.suggestion.length; index++) {
+    await inseirSugestao(id_conversa, analiseMensagem.suggestion[index]);
+    const resultadoSugestao = await obterSugestoes();
+    console.log(resultadoSugestao);
+  }
 }
 
 function dividirMensagem(mensagem: string): string[] {
@@ -77,7 +95,7 @@ function dividirMensagem(mensagem: string): string[] {
   return returnMensagem;
 }
 // criar funçao, passar o id_mensagem_watsap para dentro da funçao como parametro, extrair desse id mensagem o telefone, retornar esse telefone, tipar parametro e funçao
-function extrairTelefone(id_mensagem_whatsapp: string): string {
+export function extrairTelefone(id_mensagem_whatsapp: string): string {
   var mySubString: string = id_mensagem_whatsapp.substring(id_mensagem_whatsapp.indexOf("_") + 1, id_mensagem_whatsapp.lastIndexOf("@c.us"));
   console.log(mySubString);
 
