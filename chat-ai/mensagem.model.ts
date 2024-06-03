@@ -1,5 +1,7 @@
-export type MensagemModel = { mensagens: MensagemOriginal[] };
-export type MensagemModelFormatado = { mensagens: MensagemFormatado[] };
+export type MensagemModel = {
+  mensagens: MensagemOriginal[];
+};
+
 export type MensagemOriginal = {
   mensagem: string;
   data: string;
@@ -20,12 +22,14 @@ export type MensagemOriginal = {
   mensagemResposta: any;
 };
 
+export type MensagemModelFormatado = {
+  mensagens: MensagemFormatado[];
+};
+
 export type MensagemFormatado = {
   mensagem: string;
   tipo: string;
-  usuario: any;
-  data: string;
-  caption: string;
+  flag_enviado: number;
   id_mensagem_whatsapp: string;
 };
 

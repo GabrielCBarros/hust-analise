@@ -1,11 +1,19 @@
 import { LlamaChatSession, LlamaContext, LlamaModel } from "node-llama-cpp";
 import path from "path";
 import { fileURLToPath } from "url";
-import { CONFIG_IA, MAX_TOKENS, PRECONFIG_IA, TOKEN_CONTINUACAO, TOKEN_FINAL } from "./config";
+import {
+  CONFIG_IA_INFORMACAO_SOBRE_COMO_ANALISAR,
+  CONFIG_IA_INFORMACAO_SOBRE_AS_MENSAGENS,
+  MAX_TOKENS,
+  TOKEN_CONTINUACAO,
+  TOKEN_FINAL,
+  TOKEN_MENSAGEM_JSON,
+  CONFIG_IA_INFORMACAO_SOBRE_COMO_RESPONDER,
+} from "./config";
 import { MensagemModelFormatado, AnaliseMensagensJson, MensagemFormatado } from "./mensagem.model";
 import { inserirComplaint } from "./bd";
 import { inserirPraise } from "./bd";
-import { inseirSugestao } from "./bd";
+import { inserirSugestao } from "./bd";
 import { obterSugestoes } from "./bd";
 export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Promise<void> {
   // model name
@@ -28,28 +36,34 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
   let respostaAi = "";
 
   // PRECONFIG_IA
-  respostaAi = await session.prompt(PRECONFIG_IA);
-  console.log("resposta PRECONFIG", respostaAi);
+  // console.log("\n============================");
+  // respostaAi = await session.prompt(PRECONFIG_IA);
+  // console.log("resposta PRECONFIG", respostaAi);
 
   //CONFIG_IA
-  const listaConfig = dividirMensagem(CONFIG_IA);
+  console.log("\n\n==============  CONFIG  ==============");
+  const listaConfig = [CONFIG_IA_INFORMACAO_SOBRE_AS_MENSAGENS, CONFIG_IA_INFORMACAO_SOBRE_COMO_ANALISAR, CONFIG_IA_INFORMACAO_SOBRE_COMO_RESPONDER];
+
   for (let i = 0; i < listaConfig.length; i++) {
     respostaAi = await session.prompt(listaConfig[i]);
     console.log("resposta config", respostaAi);
   }
 
   //JSONMENSAGENS
-  const listaMensagens = dividirMensagem(JSON.stringify(jsonMensagensFormatado));
+  console.log("\n\n==============  MENSAGENS ==============");
+  const listaMensagens = dividirMensagens(jsonMensagensFormatado);
   let analiseMensagem: AnaliseMensagensJson = {
     complaint: [],
     suggestion: [],
     praise: [],
   };
   for (let index = 0; index < listaMensagens.length; index++) {
+    console.log("\n\n\n - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
     respostaAi = await session.prompt(listaMensagens[index]);
+    console.log("\n\n\n******************* ----------------------- *******************");
     console.log("resposta mensagens", respostaAi);
-    var mySubString = respostaAi.substring(respostaAi.indexOf("```json") + 7, respostaAi.lastIndexOf("```"));
-    const retornoJson: AnaliseMensagensJson = JSON.parse(mySubString);
+    // var mySubString = respostaAi.substring(respostaAi.indexOf("```json") + 7, respostaAi.lastIndexOf("```"));
+    const retornoJson: AnaliseMensagensJson = JSON.parse(respostaAi);
     analiseMensagem.complaint.push(...retornoJson.complaint);
     analiseMensagem.praise.push(...retornoJson.praise);
     analiseMensagem.suggestion.push(...retornoJson.suggestion);
@@ -67,33 +81,66 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
   }
 
   for (let index = 0; index < analiseMensagem.suggestion.length; index++) {
-    await inseirSugestao(id_conversa, analiseMensagem.suggestion[index]);
+    await inserirSugestao(id_conversa, analiseMensagem.suggestion[index]);
     const resultadoSugestao = await obterSugestoes();
     console.log(resultadoSugestao);
   }
 }
 
-function dividirMensagem(mensagem: string): string[] {
-  const returnMensagem: string[] = [];
-  if (mensagem.length <= MAX_TOKENS) {
-    returnMensagem.push(mensagem);
-  } else {
-    const tamanhoMensagem = mensagem.length;
-    let index = 0;
-    while (index < tamanhoMensagem) {
-      let msg = mensagem.substring(index, index + MAX_TOKENS);
-      index += MAX_TOKENS;
-      //se for a ultima mensagem colocar o fim se nao a continuaçao
-      if (index - tamanhoMensagem) {
-        msg += TOKEN_FINAL;
-      } else {
-        msg += TOKEN_CONTINUACAO;
+// function dividirConfig(mensagem: string): string[] {
+//   const returnMensagem: string[] = [];
+//   if (mensagem.length <= MAX_TOKENS) {
+//     returnMensagem.push(mensagem);
+//   } else {
+//     const tamanhoMensagem = mensagem.length;
+//     let index = 0;
+//     while (index < tamanhoMensagem) {
+//       let msg = mensagem.substring(index, index + MAX_TOKENS);
+//       index += MAX_TOKENS;
+//       //se for a ultima mensagem colocar o fim se nao a continuaçao
+//       if (index - tamanhoMensagem) {
+//         msg += TOKEN_FINAL;
+//       } else {
+//         msg += TOKEN_CONTINUACAO;
+//       }
+//       returnMensagem.push(msg);
+//     }
+//   }
+//   return returnMensagem;
+// }
+
+function dividirMensagens(jsonMensagensFormatado: MensagemModelFormatado): string[] {
+  const retornoListaMensagens: string[] = [];
+
+  let mensagensParaEnviar: MensagemFormatado[] = [];
+
+  let tamMensagemTotal = 0;
+  for (let index = 0; index < jsonMensagensFormatado.mensagens.length; index++) {
+    const mensagem = jsonMensagensFormatado.mensagens[index];
+    const tamMensagemAtual = JSON.stringify(mensagem).length;
+
+    if (tamMensagemTotal + tamMensagemAtual <= MAX_TOKENS) {
+      mensagensParaEnviar.push(mensagem);
+      tamMensagemTotal += tamMensagemAtual;
+
+      if (index === jsonMensagensFormatado.mensagens.length - 1) {
+        const model: MensagemModelFormatado = { mensagens: mensagensParaEnviar };
+        retornoListaMensagens.push(TOKEN_MENSAGEM_JSON + JSON.stringify(model));
       }
-      returnMensagem.push(msg);
+    } else {
+      const model: MensagemModelFormatado = { mensagens: mensagensParaEnviar };
+      retornoListaMensagens.push(TOKEN_MENSAGEM_JSON + JSON.stringify(model));
+
+      mensagensParaEnviar = [];
+
+      mensagensParaEnviar.push(mensagem);
+      tamMensagemTotal = tamMensagemAtual;
     }
   }
-  return returnMensagem;
+
+  return retornoListaMensagens;
 }
+
 // criar funçao, passar o id_mensagem_watsap para dentro da funçao como parametro, extrair desse id mensagem o telefone, retornar esse telefone, tipar parametro e funçao
 export function extrairTelefone(id_mensagem_whatsapp: string): string {
   var mySubString: string = id_mensagem_whatsapp.substring(id_mensagem_whatsapp.indexOf("_") + 1, id_mensagem_whatsapp.lastIndexOf("@c.us"));
