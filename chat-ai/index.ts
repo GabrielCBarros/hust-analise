@@ -24,8 +24,15 @@ function obterJsonMensagensFormatadas(jsonMensagens: MensagemModel): MensagemMod
   let mensagensFormatada: MensagemFormatado[] = [];
   for (let index = 0; index < jsonMensagens.mensagens.length; index++) {
     const element = jsonMensagens.mensagens[index];
+    let msg;
+    if (element.tipo === "audio") {
+      msg = element.caption;
+    } else {
+      msg = element.mensagem;
+    }
+
     const mensagemFormatado: MensagemFormatado = {
-      mensagem: element.tipo === "audio" ? element.caption : element.mensagem,
+      mensagem: msg,
       flag_enviado: element.flag_enviado,
       tipo: element.tipo,
       id_mensagem_whatsapp: element.id_mensagem_whatsapp,

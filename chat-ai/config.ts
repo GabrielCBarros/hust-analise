@@ -1,5 +1,3 @@
-export const TOKEN_CONTINUACAO = "[continuação]";
-export const TOKEN_FINAL = "[fim]";
 export const TOKEN_MENSAGEM_JSON = "[MENSAGENS_JSON]";
 
 export const MAX_TOKENS = 2000;
@@ -31,13 +29,3 @@ export const CONFIG_IA_INFORMACAO_SOBRE_COMO_RESPONDER =
   `\n   4. Resumindo, o JSON deve ser do seguinte formato:` +
   `{"suggestion": ["Suggestion1 gerada pela IA"],"complaint": ["Complaint1 gerada pela AI", "Complaint2 gerada pela AI"],"praise": []}.` +
   `\n   5. No retorno/resposta das análises de mensagens em formato JSON, não deve conter justificativa do motivo da classificação. Na resposta, eu quero que somente retorne a análise em formato JSON anteriormente especificado no item 4 (NÃO escrever nada além disso, SOMENTE o JSON).`;
-
-// export const PRECONFIG_IA =
-//   `As mensagens com mais de ${MAX_TOKENS} caracteres, serão dividadas em no máximo ${MAX_TOKENS} caracteres, e serão enviadas segmentadas para Inteligencia Artificial.` +
-//   ` Para essas mensagens haverá um token de continuação no final da mensagem: '${TOKEN_CONTINUACAO}'.` +
-//   ` Para a ultima mensagem dessa sequencia haverá no final da mensagem um token de finalização: '${TOKEN_FINAL}'.` +
-//   ` Esses tokens ('${TOKEN_CONTINUACAO}' e '${TOKEN_FINAL}') não fazem parte da mensagem a ser analisada, mas são um indicativo de quando há continuação e de quando terminou o envio segmentado.` +
-//   ` Desconsiderar esses tokens de continuação e finalização porque não fazem parte da mensagem  ` +
-//   ` As mensagens em sequência são incompletas, e precisam ser concatenadas para você compreender a mensagem por completo.` +
-//   ` Então, enquanto estiver nas mensagens que contenham ${TOKEN_CONTINUACAO}, apenas me responder: 'Aguardando a sequência da mensagem'.` +
-//   ` Somente quando eu enviar a última mensagem da sequência (mensagens que contenham o token ${TOKEN_FINAL}), será feita a análise das conversas`;

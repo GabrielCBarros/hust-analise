@@ -5,8 +5,6 @@ import {
   CONFIG_IA_INFORMACAO_SOBRE_COMO_ANALISAR,
   CONFIG_IA_INFORMACAO_SOBRE_AS_MENSAGENS,
   MAX_TOKENS,
-  TOKEN_CONTINUACAO,
-  TOKEN_FINAL,
   TOKEN_MENSAGEM_JSON,
   CONFIG_IA_INFORMACAO_SOBRE_COMO_RESPONDER,
 } from "./config";
@@ -110,35 +108,35 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
 // }
 
 function dividirMensagens(jsonMensagensFormatado: MensagemModelFormatado): string[] {
-  const retornoListaMensagens: string[] = [];
+  const listaDeMensagensParaEnviar: string[] = [];
 
-  let mensagensParaEnviar: MensagemFormatado[] = [];
+  let blocoDeMensagem: MensagemFormatado[] = [];
 
-  let tamMensagemTotal = 0;
+  let somatoria = 0;
   for (let index = 0; index < jsonMensagensFormatado.mensagens.length; index++) {
     const mensagem = jsonMensagensFormatado.mensagens[index];
     const tamMensagemAtual = JSON.stringify(mensagem).length;
 
-    if (tamMensagemTotal + tamMensagemAtual <= MAX_TOKENS) {
-      mensagensParaEnviar.push(mensagem);
-      tamMensagemTotal += tamMensagemAtual;
+    if (somatoria + tamMensagemAtual <= MAX_TOKENS) {
+      blocoDeMensagem.push(mensagem);
+      somatoria += tamMensagemAtual;
 
       if (index === jsonMensagensFormatado.mensagens.length - 1) {
-        const model: MensagemModelFormatado = { mensagens: mensagensParaEnviar };
-        retornoListaMensagens.push(TOKEN_MENSAGEM_JSON + JSON.stringify(model));
+        const model: MensagemModelFormatado = { mensagens: blocoDeMensagem };
+        listaDeMensagensParaEnviar.push(TOKEN_MENSAGEM_JSON + JSON.stringify(model));
       }
     } else {
-      const model: MensagemModelFormatado = { mensagens: mensagensParaEnviar };
-      retornoListaMensagens.push(TOKEN_MENSAGEM_JSON + JSON.stringify(model));
+      const model: MensagemModelFormatado = { mensagens: blocoDeMensagem };
+      listaDeMensagensParaEnviar.push(TOKEN_MENSAGEM_JSON + JSON.stringify(model));
 
-      mensagensParaEnviar = [];
+      blocoDeMensagem = [];
 
-      mensagensParaEnviar.push(mensagem);
-      tamMensagemTotal = tamMensagemAtual;
+      blocoDeMensagem.push(mensagem);
+      somatoria = tamMensagemAtual;
     }
   }
 
-  return retornoListaMensagens;
+  return listaDeMensagensParaEnviar;
 }
 
 // criar funçao, passar o id_mensagem_watsap para dentro da funçao como parametro, extrair desse id mensagem o telefone, retornar esse telefone, tipar parametro e funçao
