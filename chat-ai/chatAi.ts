@@ -1,18 +1,15 @@
 import { LlamaChatSession, LlamaContext, LlamaModel } from "node-llama-cpp";
 import path from "path";
 import { fileURLToPath } from "url";
+import { inserirComplaint, inserirPraise, inserirSugestao, obterSugestoes } from "./bd";
 import {
-  CONFIG_IA_INFORMACAO_SOBRE_COMO_ANALISAR,
   CONFIG_IA_INFORMACAO_SOBRE_AS_MENSAGENS,
+  CONFIG_IA_INFORMACAO_SOBRE_COMO_ANALISAR,
+  CONFIG_IA_INFORMACAO_SOBRE_COMO_RESPONDER,
   MAX_TOKENS,
   TOKEN_MENSAGEM_JSON,
-  CONFIG_IA_INFORMACAO_SOBRE_COMO_RESPONDER,
 } from "./config";
-import { MensagemModelFormatado, AnaliseMensagensJson, MensagemFormatado } from "./mensagem.model";
-import { inserirComplaint } from "./bd";
-import { inserirPraise } from "./bd";
-import { inserirSugestao } from "./bd";
-import { obterSugestoes } from "./bd";
+import { AnaliseMensagensJson, MensagemFormatado, MensagemModelFormatado } from "./mensagem.model";
 export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Promise<void> {
   // model name
   const MODEL_NAME = "mistral-7b-instruct-v0.2.Q5_K_M.gguf";
@@ -58,14 +55,22 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
   for (let index = 0; index < listaMensagens.length; index++) {
     console.log("\n\n\n - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
     respostaAi = await session.prompt(listaMensagens[index]);
-    console.log("\n\n\n******************* ----------------------- *******************");
+    console.log("******************* ----------------------- *******************");
     console.log("resposta mensagens", respostaAi);
-    // var mySubString = respostaAi.substring(respostaAi.indexOf("```json") + 7, respostaAi.lastIndexOf("```"));
-    const retornoJson: AnaliseMensagensJson = JSON.parse(respostaAi);
+
+    let retornoJson: AnaliseMensagensJson;
+    if (respostaAi.indexOf("```json") != -1 && respostaAi.lastIndexOf("```") != -1) {
+      var respostaFormatada = respostaAi.substring(respostaAi.indexOf("```json") + 7, respostaAi.lastIndexOf("```"));
+      retornoJson = JSON.parse(respostaFormatada);
+    } else {
+      retornoJson = JSON.parse(respostaAi);
+    }
+
     analiseMensagem.complaint.push(...retornoJson.complaint);
     analiseMensagem.praise.push(...retornoJson.praise);
     analiseMensagem.suggestion.push(...retornoJson.suggestion);
   }
+
   console.log("Analise de mensagens", analiseMensagem);
 
   const id_conversa = extrairTelefone(jsonMensagensFormatado.mensagens[0].id_mensagem_whatsapp);
@@ -84,28 +89,6 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
     console.log(resultadoSugestao);
   }
 }
-
-// function dividirConfig(mensagem: string): string[] {
-//   const returnMensagem: string[] = [];
-//   if (mensagem.length <= MAX_TOKENS) {
-//     returnMensagem.push(mensagem);
-//   } else {
-//     const tamanhoMensagem = mensagem.length;
-//     let index = 0;
-//     while (index < tamanhoMensagem) {
-//       let msg = mensagem.substring(index, index + MAX_TOKENS);
-//       index += MAX_TOKENS;
-//       //se for a ultima mensagem colocar o fim se nao a continuaçao
-//       if (index - tamanhoMensagem) {
-//         msg += TOKEN_FINAL;
-//       } else {
-//         msg += TOKEN_CONTINUACAO;
-//       }
-//       returnMensagem.push(msg);
-//     }
-//   }
-//   return returnMensagem;
-// }
 
 function dividirMensagens(jsonMensagensFormatado: MensagemModelFormatado): string[] {
   const listaDeMensagensParaEnviar: string[] = [];

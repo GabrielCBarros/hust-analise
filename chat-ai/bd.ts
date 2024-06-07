@@ -1,26 +1,32 @@
-import { extrairTelefone } from "./chatAi";
 import fs from "fs";
 import pg from "pg";
 import { CONFIG_BD } from "./config.bd";
-import { AnaliseMensagensJson } from "./mensagem.model";
+
 declare global {
   var connection: pg.Pool;
 }
+
 export async function connect() {
   const { Pool } = pg;
+
   if (global.connection) {
     return global.connection.connect();
   }
+
   const certificado = fs.readFileSync("./ca.pem").toString();
   let configBD = CONFIG_BD;
   configBD.ssl.ca = certificado;
   const pool = new Pool(CONFIG_BD);
   const client = await pool.connect();
   console.log("criou o pool de conexao");
+
   const resultado = await client.query("select now()");
   console.log(resultado.rows[0]);
+
   client.release();
+
   global.connection = pool;
+
   return pool.connect();
 }
 

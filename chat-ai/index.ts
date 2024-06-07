@@ -1,23 +1,18 @@
 import fs from "fs";
 import { chatAi } from "./chatAi";
 import { MensagemFormatado, MensagemModel, MensagemModelFormatado } from "./mensagem.model";
-import { MAX_TOKENS } from "./config";
-import { deletarTudoComplaint, deletarTudoPraise, deletarTudoSugestoes, obterComplaint, obterSugestoes, obterPraise } from "./bd";
 
 async function fetchJSONData() {
-  // fs.readFile("./Mensagens/messagens.lucas.json", "utf8", (error, data) => {
-  //   if (error) {
-  //     console.log(error);
-  //     return;
-  //   }
-  //   let jsonMensagens: MensagemModel = JSON.parse(data);
-  //   jsonMensagens = ordenarListaMensagens(jsonMensagens);
-  //   let jsonMensagensFormatado: MensagemModelFormatado = obterJsonMensagensFormatadas(jsonMensagens);
-  //   chatAi(jsonMensagensFormatado);
-  // });
-
-  const res = await obterComplaint();
-  console.log(res);
+  fs.readFile("./Mensagens/messagens.lucas.json", "utf8", (error, data) => {
+    if (error) {
+      console.log(error);
+      return;
+    }
+    let jsonMensagens: MensagemModel = JSON.parse(data);
+    jsonMensagens = ordenarListaMensagens(jsonMensagens);
+    let jsonMensagensFormatado: MensagemModelFormatado = obterJsonMensagensFormatadas(jsonMensagens);
+    chatAi(jsonMensagensFormatado);
+  });
 }
 
 function obterJsonMensagensFormatadas(jsonMensagens: MensagemModel): MensagemModelFormatado {
