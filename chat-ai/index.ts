@@ -1,67 +1,97 @@
 import fs from "fs";
 import { chatAi } from "./chatAi";
-import { MensagemFormatado, MensagemModel, MensagemModelFormatado } from "./mensagem.model";
+import { Called, MensagemFormatado, MensagemModel, MensagemModelFormatado, Message } from "./mensagem.model";
 
-async function fetchJSONData() {
-  fs.readFile("./Mensagens/messagens.lucas.json", "utf8", (error, data) => {
-    if (error) {
-      console.log(error);
-      return;
-    }
-    let jsonMensagens: MensagemModel = JSON.parse(data);
-    jsonMensagens = ordenarListaMensagens(jsonMensagens);
-    let jsonMensagensFormatado: MensagemModelFormatado = obterJsonMensagensFormatadas(jsonMensagens);
-    chatAi(jsonMensagensFormatado);
-  });
+function init(messagesCalled: Message[], called: Called) {
+  let mensagemModelFormatado: MensagemModelFormatado = obterMensagemModelFormatado(messagesCalled);
+  mensagemModelFormatado.id_mensagem_whatsapp = String(called.id_chamado);
+  chatAi(mensagemModelFormatado);
 }
 
-function obterJsonMensagensFormatadas(jsonMensagens: MensagemModel): MensagemModelFormatado {
+function obterMensagemModelFormatado(messagesCalled: Message[]): MensagemModelFormatado {
   let mensagensFormatada: MensagemFormatado[] = [];
-  for (let index = 0; index < jsonMensagens.mensagens.length; index++) {
-    const element = jsonMensagens.mensagens[index];
+  for (let index = 0; index < messagesCalled.length; index++) {
+    const element = messagesCalled[index];
     let msg;
-    if (element.tipo === "audio") {
+    if (element.type === "audio" || element.type === "image") {
       msg = element.caption;
     } else {
-      msg = element.mensagem;
+      msg = element.body;
     }
 
     const mensagemFormatado: MensagemFormatado = {
       mensagem: msg,
-      flag_enviado: element.flag_enviado,
-      tipo: element.tipo,
-      id_mensagem_whatsapp: element.id_mensagem_whatsapp,
+      flag_enviado: Number(element.sent),
+      tipo: element.type,
     };
 
     mensagensFormatada.push(mensagemFormatado);
   }
-  let mensagemModelFormatado: MensagemModelFormatado = { mensagens: mensagensFormatada };
+  let mensagemModelFormatado: MensagemModelFormatado = { mensagens: mensagensFormatada, id_mensagem_whatsapp: "" };
 
   return mensagemModelFormatado;
 }
 
-function ordenarListaMensagens(jsonMensagens: MensagemModel): MensagemModel {
-  const retornoMensagemModel: MensagemModel = { mensagens: [] };
+// async function fetchJSONData() {
+//   fs.readFile("./Mensagens/messagens.lucas.json", "utf8", (error, data) => {
+//     if (error) {
+//       console.log(error);
+//       return;
+//     }
+//     let jsonMensagens: MensagemModel = JSON.parse(data);
+//     jsonMensagens = ordenarListaMensagens(jsonMensagens);
+//     let jsonMensagensFormatado: MensagemModelFormatado = obterJsonMensagensFormatadas(jsonMensagens);
+//     chatAi(jsonMensagensFormatado);
+//   });
+// }
 
-  let index = jsonMensagens.mensagens.length - 1;
-  while (index >= 0) {
-    if (jsonMensagens.mensagens[index].data === jsonMensagens.mensagens[index - 1]?.data) {
-      if (jsonMensagens.mensagens[index].flag_enviado === 1) {
-        retornoMensagemModel.mensagens.push(jsonMensagens.mensagens[index - 1]);
-        retornoMensagemModel.mensagens.push(jsonMensagens.mensagens[index]);
-      } else {
-        retornoMensagemModel.mensagens.push(jsonMensagens.mensagens[index]);
-        retornoMensagemModel.mensagens.push(jsonMensagens.mensagens[index - 1]);
-      }
+// function obterJsonMensagensFormatadas(jsonMensagens: MensagemModel): MensagemModelFormatado {
+//   let mensagensFormatada: MensagemFormatado[] = [];
+//   for (let index = 0; index < jsonMensagens.mensagens.length; index++) {
+//     const element = jsonMensagens.mensagens[index];
+//     let msg;
+//     if (element.tipo === "audio") {
+//       msg = element.caption;
+//     } else {
+//       msg = element.mensagem;
+//     }
 
-      index -= 2;
-    } else {
-      retornoMensagemModel.mensagens.push(jsonMensagens.mensagens[index]);
-      index--;
-    }
-  }
+//     const mensagemFormatado: MensagemFormatado = {
+//       mensagem: msg,
+//       flag_enviado: element.flag_enviado,
+//       tipo: element.tipo,
+//       id_mensagem_whatsapp: element.id_mensagem_whatsapp,
+//     };
 
-  return retornoMensagemModel;
-}
+//     mensagensFormatada.push(mensagemFormatado);
+//   }
+//   let mensagemModelFormatado: MensagemModelFormatado = { mensagens: mensagensFormatada };
 
-fetchJSONData();
+//   return mensagemModelFormatado;
+// }
+
+// function ordenarListaMensagens(jsonMensagens: MensagemModel): MensagemModel {
+//   const retornoMensagemModel: MensagemModel = { mensagens: [] };
+
+//   let index = jsonMensagens.mensagens.length - 1;
+//   while (index >= 0) {
+//     if (jsonMensagens.mensagens[index].data === jsonMensagens.mensagens[index - 1]?.data) {
+//       if (jsonMensagens.mensagens[index].flag_enviado === 1) {
+//         retornoMensagemModel.mensagens.push(jsonMensagens.mensagens[index - 1]);
+//         retornoMensagemModel.mensagens.push(jsonMensagens.mensagens[index]);
+//       } else {
+//         retornoMensagemModel.mensagens.push(jsonMensagens.mensagens[index]);
+//         retornoMensagemModel.mensagens.push(jsonMensagens.mensagens[index - 1]);
+//       }
+
+//       index -= 2;
+//     } else {
+//       retornoMensagemModel.mensagens.push(jsonMensagens.mensagens[index]);
+//       index--;
+//     }
+//   }
+
+//   return retornoMensagemModel;
+// }
+
+// fetchJSONData();

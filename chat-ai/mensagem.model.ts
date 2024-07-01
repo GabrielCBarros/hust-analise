@@ -1,8 +1,8 @@
-export type MensagemModel = {
+export interface MensagemModel {
   mensagens: MensagemOriginal[];
-};
+}
 
-export type MensagemOriginal = {
+export interface MensagemOriginal {
   mensagem: string;
   data: string;
   caption: any;
@@ -20,21 +20,34 @@ export type MensagemOriginal = {
   id_mensagem_whatsapp: string;
   mediaURL: any;
   mensagemResposta: any;
-};
+}
 
-export type MensagemModelFormatado = {
+export interface MensagemModelFormatado {
   mensagens: MensagemFormatado[];
-};
+  id_mensagem_whatsapp: string;
+}
 
-export type MensagemFormatado = {
+export interface MensagemFormatado {
   mensagem: string;
   tipo: string;
   flag_enviado: number;
-  id_mensagem_whatsapp: string;
-};
+}
 
-export type AnaliseMensagensJson = {
+export interface AnaliseMensagensJson {
   suggestion: string[];
   complaint: string[];
   praise: string[];
-};
+}
+
+export interface Message {
+  type: string;
+  sent: boolean;
+  caption: string;
+  user: any;
+  date: string;
+  body: string;
+}
+
+export interface Called {
+  id_chamado: number;
+}

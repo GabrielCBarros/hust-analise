@@ -10,7 +10,7 @@ import {
   TOKEN_MENSAGEM_JSON,
 } from "./config";
 import { AnaliseMensagensJson, MensagemFormatado, MensagemModelFormatado } from "./mensagem.model";
-export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Promise<void> {
+export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado) {
   // model name
   const MODEL_NAME = "mistral-7b-instruct-v0.2.Q5_K_M.gguf";
   // const MODEL_NAME = "llama-2-7b.Q5_K_M.gguf";
@@ -60,7 +60,7 @@ export async function chatAi(jsonMensagensFormatado: MensagemModelFormatado): Pr
 
     let retornoJson: AnaliseMensagensJson;
     if (respostaAi.indexOf("```json") != -1 && respostaAi.lastIndexOf("```") != -1) {
-      var respostaFormatada = respostaAi.substring(respostaAi.indexOf("```json") + 7, respostaAi.lastIndexOf("```"));
+      const respostaFormatada = respostaAi.substring(respostaAi.indexOf("```json") + 7, respostaAi.lastIndexOf("```"));
       retornoJson = JSON.parse(respostaFormatada);
     } else {
       retornoJson = JSON.parse(respostaAi);
@@ -124,7 +124,7 @@ function dividirMensagens(jsonMensagensFormatado: MensagemModelFormatado): strin
 
 // criar funçao, passar o id_mensagem_watsap para dentro da funçao como parametro, extrair desse id mensagem o telefone, retornar esse telefone, tipar parametro e funçao
 export function extrairTelefone(id_mensagem_whatsapp: string): string {
-  var mySubString: string = id_mensagem_whatsapp.substring(id_mensagem_whatsapp.indexOf("_") + 1, id_mensagem_whatsapp.lastIndexOf("@c.us"));
+  let mySubString: string = id_mensagem_whatsapp.substring(id_mensagem_whatsapp.indexOf("_") + 1, id_mensagem_whatsapp.lastIndexOf("@c.us"));
   console.log(mySubString);
 
   return mySubString;
