@@ -1,11 +1,15 @@
-import fs from "fs";
 import { chatAi } from "./chatAi";
-import { Called, MensagemFormatado, MensagemModel, MensagemModelFormatado, Message } from "./mensagem.model";
+import { Called, MensagemFormatado, MensagemModelFormatado, Message } from "./mensagem.model";
+import { CALLED_EXEMPLO_1, CALLED_EXEMPLO_2, MESSAGE_EXEMPLOS_1, MESSAGE_EXEMPLOS_2 } from "./testes";
 
 function init(messagesCalled: Message[], called: Called) {
   let mensagemModelFormatado: MensagemModelFormatado = obterMensagemModelFormatado(messagesCalled);
   mensagemModelFormatado.id_mensagem_whatsapp = String(called.id_chamado);
-  chatAi(mensagemModelFormatado);
+  console.log("\n\n**********");
+
+  console.log(mensagemModelFormatado.id_mensagem_whatsapp);
+  console.log(mensagemModelFormatado.mensagens);
+  // chatAi(mensagemModelFormatado);
 }
 
 function obterMensagemModelFormatado(messagesCalled: Message[]): MensagemModelFormatado {
@@ -31,6 +35,8 @@ function obterMensagemModelFormatado(messagesCalled: Message[]): MensagemModelFo
 
   return mensagemModelFormatado;
 }
+init(MESSAGE_EXEMPLOS_1, CALLED_EXEMPLO_1);
+init(MESSAGE_EXEMPLOS_2, CALLED_EXEMPLO_2);
 
 // async function fetchJSONData() {
 //   fs.readFile("./Mensagens/messagens.lucas.json", "utf8", (error, data) => {

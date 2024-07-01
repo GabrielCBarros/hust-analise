@@ -28,7 +28,7 @@ export interface MensagemModelFormatado {
 }
 
 export interface MensagemFormatado {
-  mensagem: string;
+  mensagem: string | null;
   tipo: string;
   flag_enviado: number;
 }
@@ -42,10 +42,10 @@ export interface AnaliseMensagensJson {
 export interface Message {
   type: string;
   sent: boolean;
-  caption: string;
+  caption: string | null;
   user: any;
   date: string;
-  body: string;
+  body: string | null;
 }
 
 export interface Called {
