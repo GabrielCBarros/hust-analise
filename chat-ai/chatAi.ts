@@ -30,13 +30,16 @@ export async function chatAi(listaMensagemEmBloco: string[]): Promise<AnaliseMen
   // console.log("resposta PRECONFIG", respostaAi);
 
   //CONFIG_IA
+  console.log("\n\n==============  CONFIG  ==============");
   const listaConfig = [CONFIG_IA_INFORMACAO_SOBRE_AS_MENSAGENS, CONFIG_IA_INFORMACAO_SOBRE_COMO_ANALISAR, CONFIG_IA_INFORMACAO_SOBRE_COMO_RESPONDER];
 
   for (let i = 0; i < listaConfig.length; i++) {
     respostaAi = await session.prompt(listaConfig[i]);
+    console.log("resposta config", respostaAi);
   }
 
   //JSONMENSAGENS
+  console.log("\n\n==============  MENSAGENS ==============");
   let analiseMensagem: AnaliseMensagensJson = {
     complaint: [],
     suggestion: [],
@@ -44,7 +47,10 @@ export async function chatAi(listaMensagemEmBloco: string[]): Promise<AnaliseMen
   };
 
   for (let index = 0; index < listaMensagemEmBloco.length; index++) {
+    console.log("\n\n\n - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
     respostaAi = await session.prompt(listaMensagemEmBloco[index]);
+    console.log("******************* ----------------------- *******************");
+    console.log("resposta mensagens", respostaAi);
 
     let retornoJson: AnaliseMensagensJson;
     if (respostaAi.indexOf("```json") != -1 && respostaAi.lastIndexOf("```") != -1) {

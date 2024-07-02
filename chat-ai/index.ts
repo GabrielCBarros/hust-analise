@@ -124,10 +124,10 @@ const jsonFormat = JSON.stringify({
     let listaMensagemEmBloco: string[] = dividirMensagens(messages);
 
     const analiseMensagensJson: AnaliseMensagensJson = await chatAi(listaMensagemEmBloco);
-    console.log(analiseMensagensJson);
 
     // Final do prompt
     const promptEnd = `Mensagens:\n${messages.join("\n")}\n\nAnálise em JSON:\n${analiseMensagensJson}`;
+    console.log(promptEnd);
     // .....
   }
 })();
