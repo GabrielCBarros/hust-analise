@@ -23,8 +23,7 @@ export interface MensagemOriginal {
 }
 
 export interface MensagemModelFormatado {
-  mensagens: MensagemFormatado[];
-  id_mensagem_whatsapp: string;
+  mensagens: string[];
 }
 
 export interface MensagemFormatado {
