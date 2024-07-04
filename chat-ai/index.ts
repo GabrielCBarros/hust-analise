@@ -1,6 +1,6 @@
 import axios from "axios";
 import { chatAi } from "./chatAi";
-import { AnaliseMensagensJson, Called, MensagemFormatado, MensagemModelFormatado, Message } from "./mensagem.model";
+import { AnaliseMensagens, AnaliseMensagensPorChamado, Called, ChamadoMensagens, MensagemFormatado, MensagemModelFormatado, Message } from "./mensagem.model";
 import { MAX_TOKENS, TOKEN_MENSAGEM_JSON } from "./config";
 
 const API_BASE = "https://apiv1.hustapp.com";
@@ -110,6 +110,8 @@ const jsonFormat = JSON.stringify({
   // const calleds = await getCalleds();
   const calleds = [{ id_chamado: 6453062 }];
 
+  const listaChamadoMensagens: ChamadoMensagens[] = [];
+
   for (const called of calleds) {
     const messagesCalled = await getCalledMessages(called.id_chamado);
 
@@ -119,16 +121,17 @@ const jsonFormat = JSON.stringify({
       console.log("Poucas mensagens para analizar");
       continue;
     }
-
-    // ...... Processamento ......
     let listaMensagemEmBloco: string[] = dividirMensagens(messages);
-    const analiseMensagensJson: AnaliseMensagensJson = await chatAi(listaMensagemEmBloco);
-
-    // Final do prompt
-    console.log("Mensagens:\n", messages);
-    console.log("\n\nAnálise em JSON:\n", analiseMensagensJson);
-    // .....
+    listaChamadoMensagens.push({ id_chamado: called.id_chamado, mensagensEmBloco: listaMensagemEmBloco });
   }
+
+  // ...... Processamento ......
+  const analiseMensagensJson: AnaliseMensagensPorChamado[] = await chatAi(listaChamadoMensagens);
+
+  // Final do prompt
+  // console.log("Mensagens:\n", messages);
+  console.log("\n\nAnálise em JSON:\n", analiseMensagensJson);
+  // .....
 })();
 
 // function obterMensagemModelFormatado(messagesCalled: Message[]): MensagemModelFormatado {

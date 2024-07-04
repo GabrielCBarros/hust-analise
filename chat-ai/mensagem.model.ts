@@ -32,10 +32,15 @@ export interface MensagemFormatado {
   flag_enviado: number;
 }
 
-export interface AnaliseMensagensJson {
+export interface AnaliseMensagens {
   suggestion: string[];
   complaint: string[];
   praise: string[];
+}
+
+export interface AnaliseMensagensPorChamado {
+  analiseMensagens: AnaliseMensagens;
+  id_chamado: number;
 }
 
 export interface Message {
@@ -48,5 +53,10 @@ export interface Message {
 }
 
 export interface Called {
+  id_chamado: number;
+}
+
+export interface ChamadoMensagens {
+  mensagensEmBloco: string[];
   id_chamado: number;
 }
