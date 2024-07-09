@@ -88,13 +88,13 @@ const getMessageText = (message: Message, onlyReceived = true): string => {
   const dateFormated = convertDate(date);
   // const dateFormatedRAW = convertDate(date, true, true);
   let text = (body || caption || "").split(`\n`).join(` `);
-  if (user && user.name) {
-    text = text
-      .split(user && `${user.name}*:`)
-      .slice(1)
-      .join(user && user.name)
-      .trim();
-  }
+  // if (user && user.name) {
+  //   text = text
+  //     .split(user && `${user.name}*:`)
+  //     .slice(1)
+  //     .join(user && user.name)
+  //     .trim();
+  // }
 
   if (onlyReceived) return `(${dateFormated}): ${text.split("\n").join(" ")}`;
   return `${identifier} (${dateFormated}): ${text}`;
@@ -107,8 +107,8 @@ const jsonFormat = JSON.stringify({
 });
 
 (async () => {
-  // const calleds = await getCalleds();
-  const calleds = [{ id_chamado: 6453062 }];
+  const calleds = await getCalleds();
+  // const calleds = [{ id_chamado: 6453062 }];
 
   const listaChamadoMensagens: ChamadoMensagens[] = [];
 
